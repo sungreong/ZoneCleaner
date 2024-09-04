@@ -289,8 +289,8 @@ init_db()
 # Flask application
 app = Flask(__name__)
 from flask_cors import CORS
-# CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:8501"]}})
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:8501", "https://zonecleaner.streamlit.app"]}})
+# CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 @app.route('/save-vacation', methods=['POST'])
