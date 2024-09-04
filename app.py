@@ -271,7 +271,7 @@ def remove_vacation_data(date, worker):
 def load_vacation_data():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute('SELECT DISTINCT date, worker FROM vacation_days')
+    c.execute('SELECT date, worker FROM vacation_days')
     result = c.fetchall()
     conn.close()
     vacation_days = {}
