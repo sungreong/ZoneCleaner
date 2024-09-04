@@ -652,7 +652,8 @@ def check_vacation_data_updates():
             st.session_state.previous_vacation_days = current_vacation_data.copy()
             st.rerun()
         else :
-            print("... np update", current_vacation_data , st.session_state.previous_vacation_days)
+            # print("... np update", current_vacation_data , st.session_state.previous_vacation_days)
+            pass 
         # 현재 시간 표시 (옵션)
         check_container.text(f"Last checked: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         time.sleep(1)
