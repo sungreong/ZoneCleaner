@@ -330,7 +330,7 @@ def is_port_in_use(port):
     
 # Function to run Flask server
 def run_flask():
-    app.run(port=8000, debug=False, use_reloader=False)
+    app.run(host=local_host_ip, port=8000, debug=False, use_reloader=False)
 if is_port_in_use(8000):
     print("Port 8000 is already in use")
 else :
