@@ -189,6 +189,7 @@ def load_vacation_data():
     start_of_month = st.session_state["start_of_month"]
     end_of_month = st.session_state["end_of_month"]
     query = f"SELECT date, worker FROM {TABLE_NAME} WHERE date BETWEEN ? AND ?"
+    print(start_of_month, end_of_month)
     c.execute(query, (start_of_month, end_of_month))
 
     result = c.fetchall()
@@ -518,10 +519,8 @@ def create_app():
 
     with col2:
         end_date = st.date_input("종료 날짜", end_of_month)
-    if "start_of_month" not in st.session_state:
-        st.session_state["start_of_month"] = start_date.strftime("%Y-%m-%d")
-    if "end_of_month" not in st.session_state:
-        st.session_state["end_of_month"] = end_date.strftime("%Y-%m-%d")
+    st.session_state["start_of_month"] = start_date.strftime("%Y-%m-%d")
+    st.session_state["end_of_month"] = end_date.strftime("%Y-%m-%d")
     sidebar()
 
     # 휴가 캘린더 HTML 생성
