@@ -673,8 +673,9 @@ def remove_all_vacation_data():
     conn.commit()
     conn.close()
     
-if st.sidebar.button('REMOVE Holidays'):
+if st.sidebar.button('휴가일정 전부 삭제'):
     remove_all_vacation_data()
+    st.rerun()
 
 # 날짜를 기준으로 정렬
 # sorted_dates = sorted(vacation_data.keys(), key=lambda x: datetime.strptime(x, '%Y-%m-%d'))
