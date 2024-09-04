@@ -636,7 +636,9 @@ components.html(f"""
     }}
 </script>
 """, height=650)
-
+if 'previous_vacation_days' not in st.session_state:
+    st.session_state.previous_vacation_days = {}
+    
 import time 
 def check_vacation_data_updates():
     check_container = st.empty()
@@ -644,12 +646,13 @@ def check_vacation_data_updates():
         current_vacation_data = load_vacation_data()
         if 'previous_vacation_days' not in st.session_state:
             st.session_state.previous_vacation_days = {}
-
+            
         if current_vacation_data != st.session_state.previous_vacation_days:
             print("Vacation data updated:", current_vacation_data)
             st.session_state.previous_vacation_days = current_vacation_data.copy()
             st.rerun()
-
+        else :
+            print("... np update", current_vacation_data , st.session_state.previous_vacation_days)
         # 현재 시간 표시 (옵션)
         check_container.text(f"Last checked: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         time.sleep(1)
