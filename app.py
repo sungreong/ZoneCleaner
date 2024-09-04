@@ -509,11 +509,6 @@ def create_app():
         selected_month = st.selectbox("월 선택", list(range(1, 13)), index=current_month - 1)
 
     start_of_month, end_of_month = get_month_start_end(selected_year, selected_month)
-    sidebar()
-    if "start_of_month" not in st.session_state:
-        st.session_state["start_of_month"] = start_of_month.strftime("%Y-%m-%d")
-    if "end_of_month" not in st.session_state:
-        st.session_state["end_of_month"] = end_of_month.strftime("%Y-%m-%d")
 
     # Create two columns for the date inputs
     col1, col2 = st.columns(2)
@@ -523,9 +518,11 @@ def create_app():
 
     with col2:
         end_date = st.date_input("종료 날짜", end_of_month)
-    # 근무자 목록
-    st.session_state.start_date = start_date
-    st.session_state.end_date = end_date
+    if "start_of_month" not in st.session_state:
+        st.session_state["start_of_month"] = start_date.strftime("%Y-%m-%d")
+    if "end_of_month" not in st.session_state:
+        st.session_state["end_of_month"] = end_date.strftime("%Y-%m-%d")
+    sidebar()
 
     # 휴가 캘린더 HTML 생성
     start_month = start_date
