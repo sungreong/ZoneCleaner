@@ -548,7 +548,7 @@ components.html(f"""
         const worker = element.dataset.worker;
         const action = element.classList.contains('vacation') ? 'remove' : 'add';
         
-        fetch('http://127.0.0.1:8000/save-vacation', {{
+        fetch('https://127.0.0.1:8000/save-vacation', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
             body: JSON.stringify({{ date: date, worker: worker, action: action }})
