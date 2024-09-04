@@ -186,9 +186,10 @@ def load_vacation_data():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     # c.execute(f"SELECT date, worker FROM {TABLE_NAME}")
-    start_of_month = st.session_state.start_of_month
-    end_of_month = st.session_state.end_of_month
-    c.execute(f"SELECT date, worker FROM {TABLE_NAME} WHERE date BETWEEN ? AND ?", (start_of_month, end_of_month))
+    start_of_month = st.session_state["start_of_month"]
+    end_of_month = st.session_state["end_of_month"]
+    query = f"SELECT date, worker FROM {TABLE_NAME} WHERE date BETWEEN ? AND ?"
+    c.execute(query, (start_of_month, end_of_month))
 
     result = c.fetchall()
     conn.close()
