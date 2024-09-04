@@ -910,7 +910,7 @@ if __name__ == "__main__":
         st.markdown(
             """
             <div style="text-align: center;">
-                <img src="https://github.com/sungreong/ZoneCleaner/blob/main/imgs/uandi.jpg" alt="image" style="width: 90%; max-width: 800px;">
+                <img src="https://github.com/sungreong/ZoneCleaner/blob/f9a51ca21a61604dfcf844efa6182dbed93d8350/imgs/uandi.jpg" alt="image" style="width: 90%; max-width: 800px;">
             </div>
             """,
             unsafe_allow_html=True,
