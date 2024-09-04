@@ -701,7 +701,7 @@ def create_app():
         }}
     </script>
     """,
-        height=300,
+        height=350,
     )
 
     # if st.button('Vacation Data 출력'):
