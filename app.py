@@ -421,6 +421,8 @@ def sidebar():
         if st.session_state.file_processed:
             st.sidebar.info("파일 업로드 및 처리가 완료되었습니다.")
             st.sidebar.button("다시 업로드", on_click=reset_file_upload)
+    height = st.number_input("캘린더 높이", min_value=0, max_value=1000, value=1000)
+    st.session_state.calendar_height = height
 
     st.sidebar.subheader("현재 휴가 일정")
 
@@ -531,7 +533,6 @@ def create_app():
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
     vacation_calendars_html += "</div>"
-    height = st.number_input("캘린더 높이", min_value=0, max_value=1000, value=1000)
     # CSS와 JavaScript를 포함한 HTML 렌더링
     components.html(
         f"""
@@ -722,7 +723,7 @@ def create_app():
         
     </script>
     """,
-        height=height,
+        height=st.session_state.calendar_height,
     )
 
     # if st.button('Vacation Data 출력'):
