@@ -398,6 +398,17 @@ def read_csv_file(file):
             df = pd.read_csv(io.StringIO(file_content.decode('cp949')))
     
     return df
+
+def check_vacation_data():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('SELECT * FROM vacation_days')
+    rows = c.fetchall()
+    conn.close()
+    print("Current vacation data in the database:", rows)
+
+if st.sidebar.button("show") :
+    check_vacation_data()
 # Check if a file h
 if st.sidebar.toggle("휴가 일정 업로드") :
     uploaded_file = st.sidebar.file_uploader("CSV 파일 업로드", type="csv")
