@@ -421,7 +421,7 @@ def sidebar():
         if st.session_state.file_processed:
             st.sidebar.info("파일 업로드 및 처리가 완료되었습니다.")
             st.sidebar.button("다시 업로드", on_click=reset_file_upload)
-    height = st.sidebar.number_input("캘린더 높이", min_value=0, max_value=1000, value=1000)
+    height = st.sidebar.number_input("캘린더 높이", min_value=0, max_value=2000, value=400)
     st.session_state.calendar_height = height
 
     st.sidebar.subheader("현재 휴가 일정")
