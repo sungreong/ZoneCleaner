@@ -513,11 +513,8 @@ def create_app():
 
     with col2:
         selected_month = st.selectbox("월 선택", list(range(1, 13)), index=current_month - 1)
-
-    # Get the first and last day of the selected month
     start_of_month, end_of_month = get_month_start_end(selected_year, selected_month)
-    st.session_state.start_of_month = start_of_month
-    st.session_state.end_of_month = end_of_month
+
     # Create two columns for the date inputs
     col1, col2 = st.columns(2)
 
