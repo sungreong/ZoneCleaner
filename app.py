@@ -449,7 +449,7 @@ def sidebar():
     # 근로자 목록 (알파벳 순으로 정렬)
     sorted_workers = sorted(worker_vacations.keys())
     # Add vacation functionality
-    weekdays = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"]
+    weekdays = ["월", "화", "수", "목", "금", "토", "일"]
 
     for worker in sorted_workers:
         sorted_dates = sorted(worker_vacations[worker], key=lambda x: datetime.strptime(x, "%Y-%m-%d"))
