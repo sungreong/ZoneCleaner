@@ -907,7 +907,14 @@ if __name__ == "__main__":
     if not st.session_state.authenticated:
         # Show the password input field if not authenticated
         password = st.text_input("Enter Key", type="password")
-
+        st.markdown(
+            """
+            <div style="text-align: center;">
+                <img src="./imgs/uandi.jpg" alt="image" style="width: 90%; max-width: 800px;">
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
         # Check if the entered password matches the stored secret
         if password == st.secrets["password"]["enter_key"]:
             st.session_state.authenticated = True  # Set authenticated to True
