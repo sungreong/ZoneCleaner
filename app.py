@@ -268,6 +268,11 @@ def get_month_start_end(year, month):
     else:
         end_of_month = datetime(year, month + 1, 1) - timedelta(days=1)
 
+    if "start_of_month" not in st.session_state:
+        st.session_state["start_of_month"] = start_of_month
+    if "end_of_month" not in st.session_state:
+        st.session_state["end_of_month"] = end_of_month
+
     return start_of_month, end_of_month
 
 
