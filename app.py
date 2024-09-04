@@ -531,7 +531,7 @@ def create_app():
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
     vacation_calendars_html += "</div>"
-
+    height = st.number_input("캘린더 높이", min_value=0, max_value=1000, value=1000)
     # CSS와 JavaScript를 포함한 HTML 렌더링
     components.html(
         f"""
@@ -722,7 +722,7 @@ def create_app():
         
     </script>
     """,
-        height=350,
+        height=height,
     )
 
     # if st.button('Vacation Data 출력'):
