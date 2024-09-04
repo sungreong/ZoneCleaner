@@ -305,7 +305,7 @@ def save_vacation_route():
         save_vacation_data(date, worker)
     elif action == 'remove':
         remove_vacation_data(date, worker)
-    return jsonify({"status": "success", "message": "Vacation data updated"}), 200
+    return jsonify({"status": "success", "message": f"Vacation data updated({action})"}), 200
 
 @app.route('/get-vacation-data', methods=['GET'])
 def get_vacation_data_route():
