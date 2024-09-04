@@ -14,7 +14,7 @@ from threading import Thread
 # Streamlit 페이지 설정을 wide 모드로 변경
 st.set_page_config(layout="wide")
 
-local_host_ip='0.0.0.0
+local_host_ip='0.0.0.0'
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
 
