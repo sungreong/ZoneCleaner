@@ -245,7 +245,7 @@ def init_db():
 def save_vacation_data(date, worker):
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    
+    print("save..." , date, worker)
     # Check if the record already exists
     c.execute('SELECT * FROM vacation_days WHERE date = ? AND worker = ?', (date, worker))
     existing_record = c.fetchone()  # Fetch one matching record, if any
@@ -255,7 +255,7 @@ def save_vacation_data(date, worker):
         c.execute('INSERT INTO vacation_days (date, worker) VALUES (?, ?)', (date, worker))
         conn.commit()
     else:
-        pass 
+        print("exist...", existing_record)
     conn.close()
 
 
