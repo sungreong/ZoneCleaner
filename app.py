@@ -652,7 +652,7 @@ def check_vacation_data_updates():
 
         # 현재 시간 표시 (옵션)
         check_container.text(f"Last checked: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        time.sleep(10)
+        time.sleep(1)
 
 # 휴가 일정 표시
 st.sidebar.subheader('현재 휴가 일정')
