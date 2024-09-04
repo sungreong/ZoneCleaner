@@ -544,7 +544,9 @@ components.html(f"""
         }})
         .then(response => response.json())
         .then(data => {{
-            console.log('toggle update Success:', data , action , worker, date);
+            console.log("---")
+            console.log('toggle update Success:', data);
+            console.log("---")
             element.classList.toggle('vacation');
         }})
         .catch((error) => console.error('Error:', error));
