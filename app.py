@@ -511,9 +511,9 @@ def create_app():
     start_of_month, end_of_month = get_month_start_end(selected_year, selected_month)
     sidebar()
     if "start_of_month" not in st.session_state:
-        st.session_state["start_of_month"] = start_of_month
+        st.session_state["start_of_month"] = start_of_month.strftime("%Y-%m-%d")
     if "end_of_month" not in st.session_state:
-        st.session_state["end_of_month"] = end_of_month
+        st.session_state["end_of_month"] = end_of_month.strftime("%Y-%m-%d")
 
     # Create two columns for the date inputs
     col1, col2 = st.columns(2)
