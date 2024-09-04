@@ -576,6 +576,7 @@ components.html(f"""
         .then(response => response.json())
         .then(data => {{
             vacationData = data;
+            console.log("api-get-vacation-data")
             console.log("Vacation data updated:", vacationData);
             // 여기에 캘린더 UI 업데이트 로직 추가
         }})
