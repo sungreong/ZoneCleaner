@@ -21,16 +21,28 @@ def get_b_zone_min_max(schedule):
     return expected_b_cout_min, expected_b_cout_max
 
 
+from datetime import datetime
+
+
 def solve_cleaning_schedule(schedule, workers, vacation_days):
     # 휴가를 고려하여 스케줄 필터링
     filtered_schedule = {}
+
+    def change_date_format(date):
+        if isinstance(date, str):
+            return datetime.strptime(date, "%Y-%m-%d")
+        return date
+
+    vacation_days = {change_date_format(day): workers for day, workers in vacation_days.items()}
     for day, day_workers in schedule.items():
+        if isinstance(day, str):
+            day = datetime.strptime(day, "%Y-%m-%d")
+
         available_workers = [w for w in day_workers if w not in vacation_days.get(day, [])]
         if available_workers:  # 근무 가능한 직원이 있는 경우에만 스케줄에 포함
             filtered_schedule[day] = available_workers
 
     print("Filtered schedule:", filtered_schedule)
-
     model = cp_model.CpModel()
     days = sorted(filtered_schedule.keys())
     num_workers = len(workers)
