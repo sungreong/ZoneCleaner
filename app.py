@@ -405,7 +405,7 @@ def check_vacation_data():
     c.execute('SELECT * FROM vacation_days')
     rows = c.fetchall()
     conn.close()
-    print("Current vacation data in the database:", rows)
+    st.write(rows)
 
 if st.sidebar.button("show") :
     check_vacation_data()
