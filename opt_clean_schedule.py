@@ -27,6 +27,7 @@ from datetime import datetime
 def solve_cleaning_schedule(schedule, workers, vacation_days):
     # 휴가를 고려하여 스케줄 필터링
     filtered_schedule = {}
+    print(schedule)
 
     def change_date_format(date):
         if isinstance(date, str):
