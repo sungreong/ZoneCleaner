@@ -665,6 +665,17 @@ vacation_data = load_vacation_data()
 if st.sidebar.button('RERUN'):
     st.rerun()
 
+def remove_all_vacation_data():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    # This will delete all rows from the vacation_days table
+    c.execute('DELETE FROM vacation_days')
+    conn.commit()
+    conn.close()
+    
+if st.sidebar.button('REMOVE Holidays'):
+    remove_all_vacation_data()
+
 # 날짜를 기준으로 정렬
 # sorted_dates = sorted(vacation_data.keys(), key=lambda x: datetime.strptime(x, '%Y-%m-%d'))
 
