@@ -1,0 +1,8 @@
+chardet==5.1.0
+Flask==3.0.3
+Flask_Cors==5.0.0
+holidays==0.14.2
+ortools==9.4.1874
+pandas==2.0.3
+requests==2.27.1
+streamlit==1.38.0
