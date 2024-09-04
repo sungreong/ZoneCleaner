@@ -662,10 +662,25 @@ def create_app():
                 }});
             }}
         }}
-        
+        function adjustIframeSize() {{
+            const container = document.querySelector('.calendar-container');
+            if (container) {{
+                const actualHeight = container.scrollHeight;
+                const actualWidth = container.scrollWidth;
+                
+                // Send height and width to the parent window to adjust the iframe size
+                window.parent.postMessage({{
+                    type: "resize-iframe",
+                    height: actualHeight + 50, // Add extra padding to avoid content cutoff
+                    width: actualWidth + 50    // Adjust width similarly
+                }}, "*");
+            }}
+        }}
+
         function init() {{
             initializeCalendars();
             adjustHeight();
+            adjustIframeSize();
             updateVacationData();
             
             const updateButton = document.getElementById('update-button');
@@ -681,6 +696,7 @@ def create_app():
             // MutationObserver 설정
             const observer = new MutationObserver(() => {{
                 adjustHeight();
+                adjustIframeSize();
                 window.parent.postMessage({{
                     type: "streamlit:componentReady",
                     value: true
@@ -691,6 +707,9 @@ def create_app():
             if (calendarRoot) {{
                 observer.observe(calendarRoot, {{ childList: true, subtree: true }});
             }}
+            // 페이지 로드 후 초기 크기 조정
+            window.addEventListener("resize", adjustIframeSize);
+            adjustIframeSize();
         }}
         
         // DOMContentLoaded 이벤트를 사용하여 페이지 로드 완료 후 초기화
@@ -699,6 +718,7 @@ def create_app():
         }} else {{
             init();
         }}
+        
     </script>
     """,
         height=350,
