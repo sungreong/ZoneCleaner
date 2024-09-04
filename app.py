@@ -14,7 +14,7 @@ from threading import Thread
 # Streamlit 페이지 설정을 wide 모드로 변경
 st.set_page_config(layout="wide")
 
-local_host_ip='0.0.0.0'
+local_host_ip='localhost'
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
 
@@ -291,7 +291,8 @@ app = Flask(__name__)
 from flask_cors import CORS
 # CORS(app, resources={r"/*": {"origins": [f"http://{local_host_ip}:3000", f"http://{local_host_ip}:8501", "https://zonecleaner.streamlit.app"]}})
 # CORS(app, resources={r"/*": {"origins": "*"}})
-CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app)  # Enable CORS to allow cross-origin requests within the same machine
 
 
 @app.route('/save-vacation', methods=['POST'])
