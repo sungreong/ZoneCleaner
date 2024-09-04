@@ -628,7 +628,7 @@ def create_app():
                 const actualHeight = container.scrollHeight;
                 window.parent.postMessage({{
                     type: "streamlit:setFrameHeight",
-                    height: actualHeight
+                    height: actualHeight + 50
                 }}, "*");
             }}
         }}
