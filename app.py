@@ -449,14 +449,17 @@ def sidebar():
     # 근로자 목록 (알파벳 순으로 정렬)
     sorted_workers = sorted(worker_vacations.keys())
     # Add vacation functionality
+    weekdays = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"]
+
     for worker in sorted_workers:
         sorted_dates = sorted(worker_vacations[worker], key=lambda x: datetime.strptime(x, "%Y-%m-%d"))
         with st.sidebar.expander(f"{worker}의 휴가 ({len(sorted_dates)}일)", expanded=False):
             if worker_vacations[worker]:
                 for date in sorted_dates:
-                    col1, col2 = st.columns([3, 1])
+                    col1, col2 = st.columns([3, 2])
                     with col1:
-                        st.write(f"• {date}")
+                        day_of_week = weekdays[datetime.strptime(date, "%Y-%m-%d").weekday()]
+                        st.write(f"• {date} ({day_of_week})")
                     with col2:
                         if st.button("삭제", key=f"delete_{worker}_{date}"):
                             remove_vacation_data(date, worker)
