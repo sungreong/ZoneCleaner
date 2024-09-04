@@ -14,7 +14,7 @@ from threading import Thread
 # Streamlit 페이지 설정을 wide 모드로 변경
 st.set_page_config(layout="wide")
 
-
+local_host_ip='0.0.0.0
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
 
@@ -289,7 +289,7 @@ init_db()
 # Flask application
 app = Flask(__name__)
 from flask_cors import CORS
-CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "http://localhost:8501", "https://zonecleaner.streamlit.app"]}})
+CORS(app, resources={r"/*": {"origins": [f"http://{local_host_ip}:3000", f"http://{local_host_ip}:8501", "https://zonecleaner.streamlit.app"]}})
 # CORS(app, resources={r"/*": {"origins": "*"}})
 
 
@@ -535,7 +535,7 @@ components.html(f"""
         const worker = element.dataset.worker;
         const action = element.classList.contains('vacation') ? 'remove' : 'add';
         
-        fetch('http://localhost:8000/save-vacation', {{
+        fetch('http://0.0.0.0:8000/save-vacation', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
             body: JSON.stringify({{ date: date, worker: worker, action: action }})
@@ -568,7 +568,7 @@ components.html(f"""
     }}
     
     function updateVacationData() {{
-        fetch('http://localhost:8000/get-vacation-data')
+        fetch('http://0.0.0.0:8000/get-vacation-data')
         .then(response => response.json())
         .then(data => {{
             vacationData = data;
@@ -580,7 +580,7 @@ components.html(f"""
     
     function resetVacationData() {{
         if (confirm('정말로 모든 휴가 데이터를 초기화하시겠습니까?')) {{
-            fetch('http://localhost:8000/reset-vacation-data', {{
+            fetch('http://0.0.0.0:8000/reset-vacation-data', {{
                 method: 'POST',
             }})
             .then(response => response.json())
