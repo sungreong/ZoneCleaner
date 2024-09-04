@@ -185,7 +185,11 @@ def remove_vacation_data(date, worker):
 def load_vacation_data():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute(f"SELECT date, worker FROM {TABLE_NAME}")
+    # c.execute(f"SELECT date, worker FROM {TABLE_NAME}")
+    start_of_month = st.session_state.start_of_month
+    end_of_month = st.session_state.end_of_month
+    c.execute(f"SELECT date, worker FROM {TABLE_NAME} WHERE date BETWEEN ? AND ?", (start_of_month, end_of_month))
+
     result = c.fetchall()
     conn.close()
     vacation_days = {}
@@ -506,7 +510,8 @@ def create_app():
 
     # Get the first and last day of the selected month
     start_of_month, end_of_month = get_month_start_end(selected_year, selected_month)
-
+    st.session_state.start_of_month = start_of_month
+    st.session_state.end_of_month = end_of_month
     # Create two columns for the date inputs
     col1, col2 = st.columns(2)
 
@@ -516,6 +521,8 @@ def create_app():
     with col2:
         end_date = st.date_input("종료 날짜", end_of_month)
     # 근무자 목록
+    st.session_state.start_date = start_date
+    st.session_state.end_date = end_date
 
     # 휴가 캘린더 HTML 생성
     start_month = start_date
