@@ -32,13 +32,13 @@ def solve_cleaning_schedule(schedule, workers, vacation_days):
 
     def change_date_format(date):
         if isinstance(date, str):
-            return datetime.strptime(date, "%Y-%m-%d")
+            return datetime.strptime(date, "%Y-%m-%d").date()
         return date
 
     vacation_days = {change_date_format(day): workers for day, workers in vacation_days.items()}
     for day, day_workers in schedule.items():
         if isinstance(day, str):
-            day = datetime.strptime(day, "%Y-%m-%d")
+            day = datetime.strptime(day, "%Y-%m-%d").date()
 
         available_workers = [w for w in day_workers if w not in vacation_days.get(day, [])]
         if available_workers:  # 근무 가능한 직원이 있는 경우에만 스케줄에 포함
