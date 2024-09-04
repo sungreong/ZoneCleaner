@@ -14,7 +14,7 @@ from threading import Thread
 # Streamlit 페이지 설정을 wide 모드로 변경
 st.set_page_config(layout="wide")
 
-local_host_ip='localhost'
+local_host_ip='127.0.0.1'
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
 
@@ -291,8 +291,8 @@ app = Flask(__name__)
 from flask_cors import CORS
 # CORS(app, resources={r"/*": {"origins": [f"http://{local_host_ip}:3000", f"http://{local_host_ip}:8501", "https://zonecleaner.streamlit.app"]}})
 # CORS(app, resources={r"/*": {"origins": "*"}})
-# CORS(app, resources={r"/*": {"origins": "*"}})
-CORS(app)  # Enable CORS to allow cross-origin requests within the same machine
+CORS(app, resources={r"/*": {"origins": "*"}})
+# CORS(app)  # Enable CORS to allow cross-origin requests within the same machine
 
 
 @app.route('/save-vacation', methods=['POST'])
@@ -537,7 +537,7 @@ components.html(f"""
         const worker = element.dataset.worker;
         const action = element.classList.contains('vacation') ? 'remove' : 'add';
         
-        fetch('http://0.0.0.0:8000/save-vacation', {{
+        fetch('http://127.0.0.1:8000/save-vacation', {{
             method: 'POST',
             headers: {{ 'Content-Type': 'application/json' }},
             body: JSON.stringify({{ date: date, worker: worker, action: action }})
@@ -570,7 +570,7 @@ components.html(f"""
     }}
     
     function updateVacationData() {{
-        fetch('http://0.0.0.0:8000/get-vacation-data')
+        fetch('http://127.0.0.1:8000/get-vacation-data')
         .then(response => response.json())
         .then(data => {{
             vacationData = data;
@@ -582,7 +582,7 @@ components.html(f"""
     
     function resetVacationData() {{
         if (confirm('정말로 모든 휴가 데이터를 초기화하시겠습니까?')) {{
-            fetch('http://0.0.0.0:8000/reset-vacation-data', {{
+            fetch('http://127.0.0.1:8000/reset-vacation-data', {{
                 method: 'POST',
             }})
             .then(response => response.json())
@@ -702,11 +702,14 @@ for worker in sorted_workers:
     sorted_dates = sorted(worker_vacations[worker], key=lambda x: datetime.strptime(x, '%Y-%m-%d'))
     with st.sidebar.expander(f"{worker}의 휴가 ({len(sorted_dates)}일)", expanded=False):
         if worker_vacations[worker]:
-            # 날짜순으로 정렬
-            
             for date in sorted_dates:
-                st.write(f"• {date}")  # Display vacation dates
-            
+                col1, col2 = st.columns([3, 1])
+                with col1:
+                    st.write(f"• {date}")
+                with col2:
+                    if st.button("삭제", key=f"delete_{worker}_{date}"):
+                        remove_vacation_data(date, worker)
+                        st.rerun()
         else:
             st.write("예정된 휴가 없음")
             
