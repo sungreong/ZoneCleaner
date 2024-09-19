@@ -774,6 +774,7 @@ def create_app():
     use_kr_holiday = st.checkbox(label="일요일을 제외한 휴일 포함할 지 여부", value=False)
 
     # 기간 내 공휴일 필터링
+    st.write(kr_holidays.items())
     filtered_holidays = {name: date for name, date in kr_holidays.items() if start_date <= date <= end_date}
 
     # 후보 공휴일 목록에서 사용자가 제외할 공휴일 선택
