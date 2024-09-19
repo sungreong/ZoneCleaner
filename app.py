@@ -183,6 +183,17 @@ def remove_vacation_data(date, worker):
 
 # Load all vacation data from the database
 def load_vacation_data():
+    result = select_vacation_data()
+    vacation_days = {}
+    for date, worker in result:
+        if date not in vacation_days:
+            vacation_days[date] = []
+        vacation_days[date].append(worker)
+
+    return vacation_days
+
+
+def select_vacation_data():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     # c.execute(f"SELECT date, worker FROM {TABLE_NAME}")
@@ -194,13 +205,7 @@ def load_vacation_data():
 
     result = c.fetchall()
     conn.close()
-    vacation_days = {}
-    for date, worker in result:
-        if date not in vacation_days:
-            vacation_days[date] = []
-        vacation_days[date].append(worker)
-
-    return vacation_days
+    return result
 
 
 # Flask application
@@ -483,6 +488,24 @@ def sidebar():
     if st.sidebar.button("show"):
         check_vacation_data()
 
+    if st.sidebar.button("save vacation data"):
+        data = select_vacation_data()
+        # 데이터를 Pandas DataFrame으로 변환
+        df = pd.DataFrame(data, columns=["Date", "Worker"])
+
+        # Streamlit에 테이블로 표시
+        st.write("Vacation Data:", df)
+
+        # CSV로 저장할 수 있도록 Streamlit에서 다운로드 버튼 제공
+        csv = df.to_csv(index=False).encode("utf-8")
+        st.sidebar.download_button(
+            label="Download vacation data as CSV",
+            data=csv,
+            file_name="vacation_data.csv",
+            mime="text/csv",
+            key="download_button",  # 버튼 고유 키 추가
+        )
+
 
 def create_app():
 
@@ -743,9 +766,6 @@ def create_app():
     # 스케줄 최적화 버튼
     if st.button("스케줄 최적화"):
         # 스케줄 생성
-        print("---")
-        print(workers)
-        print("---")
         schedule = generate_schedule(start_date, end_date, workers)
         # 최적화 실행
         try:
@@ -884,7 +904,7 @@ def create_app():
                 </script>
                 {calendar_html}
                 """,
-                    height=600,
+                    height=470,
                 )
 
                 current_month += timedelta(days=32)
