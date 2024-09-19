@@ -23,18 +23,21 @@ local_host_ip = "127.0.0.1"
 kr_holidays = holidays.KR()
 
 
-def is_workday(date):
-    return date.weekday() < 6 and date not in kr_holidays
+def is_workday(date, use_kr_holiday=True):
+    if use_kr_holiday:
+        return date.weekday() < 6 and date not in kr_holidays
+    else:
+        return date.weekday() < 6
 
 
 from copy import deepcopy
 
 
-def generate_schedule(start_date, end_date, workers):
+def generate_schedule(start_date, end_date, workers, use_kr_holiday=True):
     schedule = {}
     temp_current_date = deepcopy(start_date)
     while temp_current_date <= end_date:
-        if is_workday(temp_current_date):
+        if is_workday(temp_current_date, use_kr_holiday=use_kr_holiday):
             schedule[temp_current_date] = workers.copy()
         temp_current_date += timedelta(days=1)
     return schedule
@@ -768,9 +771,10 @@ def create_app():
     vacation_data = load_vacation_data()
 
     # 스케줄 최적화 버튼
+    use_kr_holiday = st.checkbox(label="일요일을 제외한 휴일 포함할 지 여부", bool=False)
     if st.button("스케줄 최적화"):
         # 스케줄 생성
-        schedule = generate_schedule(start_date, end_date, workers)
+        schedule = generate_schedule(start_date, end_date, workers, use_kr_holiday=use_kr_holiday)
         # 최적화 실행
         try:
             output_schedule = solve_cleaning_schedule_logic(schedule, workers, vacation_data)
