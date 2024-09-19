@@ -786,7 +786,9 @@ def create_app():
     used_kr_holidays = get_kr_holidays(start_date, end_date)
 
     # 후보 공휴일 목록에서 사용자가 제외할 공휴일 선택
-    selected_holidays = st.multiselect("Select Holidays to Exclude", used_kr_holidays)
+    selected_holidays = st.multiselect(
+        "공휴일 선택(공휴일 일할 시 선택 X / 실제 쉬는 날이면 선택 O)", used_kr_holidays
+    )
 
     if st.button("스케줄 최적화"):
         # 스케줄 생성
