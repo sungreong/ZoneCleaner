@@ -743,6 +743,9 @@ def create_app():
     # 스케줄 최적화 버튼
     if st.button("스케줄 최적화"):
         # 스케줄 생성
+        print("---")
+        print(workers)
+        print("---")
         schedule = generate_schedule(start_date, end_date, workers)
         # 최적화 실행
         try:

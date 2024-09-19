@@ -27,8 +27,6 @@ from datetime import datetime
 def solve_cleaning_schedule(schedule, workers, vacation_days):
     # 휴가를 고려하여 스케줄 필터링
     filtered_schedule = {}
-    print(schedule)
-    print(vacation_days)
 
     def change_date_format(date):
         if isinstance(date, str):
@@ -47,10 +45,8 @@ def solve_cleaning_schedule(schedule, workers, vacation_days):
     print("Filtered schedule:", filtered_schedule)
     model = cp_model.CpModel()
     days = sorted(filtered_schedule.keys())
-    num_workers = len(workers)
-
     expected_b_count_min, expected_b_count_max = get_b_zone_min_max(filtered_schedule)
-    print(expected_b_count_min, expected_b_count_max)
+    print("B Range", expected_b_count_min, " ~ ", expected_b_count_max)
     cleaning_assignments = {}
     for day in days:
         for worker in filtered_schedule[day]:
@@ -88,11 +84,11 @@ def solve_cleaning_schedule(schedule, workers, vacation_days):
         solo_zone_max_cleanings = int(expected_b_count_max / 2) + 1
         total_zone2_cleanings[worker] = model.NewIntVar(0, expected_b_count_max, f"total_zone2_{worker}")
         solo_zone2_cleanings[worker] = model.NewIntVar(0, solo_zone_max_cleanings, f"solo_zone2_{worker}")
-        model.Add(
-            solo_zone2_cleanings[worker]
-            == sum(cleaning_assignments.get((day, worker, 2), 0) for day in days if len(filtered_schedule[day]) == 3)
-        )
-        model.Add(total_zone2_cleanings[worker] == sum(cleaning_assignments.get((day, worker, 2), 0) for day in days))
+        # model.Add(
+        #     solo_zone2_cleanings[worker]
+        #     == sum(cleaning_assignments.get((day, worker, 2), 0) for day in days if len(filtered_schedule[day]) == 3)
+        # )
+        # model.Add(total_zone2_cleanings[worker] == sum(cleaning_assignments.get((day, worker, 2), 0) for day in days))
 
     for worker in workers:
         model.Add(total_zone2_cleanings[worker] >= expected_b_count_min)
@@ -117,11 +113,11 @@ def solve_cleaning_schedule(schedule, workers, vacation_days):
         model.AddMaxEquality(penalty, [0, 2 - solo_zone2_cleanings[worker]])
         solo_cleaning_penalties.append(penalty)
 
-    model.Minimize(sum(deviations) + sum(deviations_2) + sum(solo_cleaning_penalties))
+    model.Minimize(sum(deviations) + sum(solo_cleaning_penalties) + sum(deviations_2))
     print("start")
 
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 60  # 최대 10초 동안만 실행되도록 설정
+    solver.parameters.max_time_in_seconds = 120  # 최대 10초 동안만 실행되도록 설정
 
     best_solution = None
     best_cost = float("inf")
