@@ -771,7 +771,7 @@ def create_app():
     vacation_data = load_vacation_data()
 
     # 스케줄 최적화 버튼
-    use_kr_holiday = st.checkbox(label="일요일을 제외한 휴일 포함할 지 여부", bool=False)
+    use_kr_holiday = st.checkbox(label="일요일을 제외한 휴일 포함할 지 여부", value=False)
     if st.button("스케줄 최적화"):
         # 스케줄 생성
         schedule = generate_schedule(start_date, end_date, workers, use_kr_holiday=use_kr_holiday)
