@@ -427,7 +427,7 @@ def sidebar():
         if st.session_state.file_processed:
             st.sidebar.info("파일 업로드 및 처리가 완료되었습니다.")
             st.sidebar.button("다시 업로드", on_click=reset_file_upload)
-    height = st.sidebar.number_input("캘린더 높이", min_value=0, max_value=2000, value=400)
+    height = st.sidebar.number_input("캘린더 높이", min_value=400, max_value=3200, value=400, step=400)
     st.session_state.calendar_height = height
 
     st.sidebar.subheader("현재 휴가 일정")
@@ -773,15 +773,6 @@ def create_app():
             # 결과 표시
             with st.expander("최적화된 청소 스케줄"):
                 st.dataframe(df, height=400, use_container_width=True)  # DataFrame 크기 조정
-                # CSV 다운로드 버튼
-                csv = df.to_csv(index=False)
-                st.download_button(
-                    label="CSV 다운로드",
-                    data=csv,
-                    file_name="cleaning_schedule.csv",
-                    mime="text/csv",
-                )
-
             # 청소 횟수 통계 표시
             with st.expander("청소 횟수 통계"):
 
@@ -893,7 +884,7 @@ def create_app():
                 </script>
                 {calendar_html}
                 """,
-                    height=600,
+                    height=300,
                 )
 
                 current_month += timedelta(days=32)
