@@ -487,7 +487,7 @@ def sidebar():
 
     # if st.sidebar.button("show"):
     #     check_vacation_data()
-    st.subheader("휴가 데이터 다운로드")
+    st.sidebar.subheader("휴가 데이터 다운로드")
     # 인코딩 방식 선택
     encoding_option = st.sidebar.selectbox("인코딩 선택(윈도우면 cp949)", ("utf-8", "cp949"))
     if st.sidebar.button("save vacation data"):
