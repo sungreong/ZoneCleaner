@@ -158,3 +158,76 @@ def solve_cleaning_schedule(schedule, workers, vacation_days):
         return output_schedule
     else:
         return None
+
+
+def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
+    # 휴가를 고려하여 스케줄 필터링
+    filtered_schedule = {}
+
+    def change_date_format(date):
+        if isinstance(date, str):
+            return datetime.strptime(date, "%Y-%m-%d").date()
+        return date
+
+    vacation_days = {change_date_format(day): workers for day, workers in vacation_days.items()}
+    for day, day_workers in schedule.items():
+        if isinstance(day, str):
+            day = datetime.strptime(day, "%Y-%m-%d").date()
+
+        available_workers = [w for w in day_workers if w not in vacation_days.get(day, [])]
+        if available_workers:  # 근무 가능한 직원이 있는 경우에만 스케줄에 포함
+            filtered_schedule[day] = available_workers
+
+    # 청소 횟수 및 혼자 청소한 횟수 추적
+    b_cleaning_count = {worker: 0 for worker in workers}  # B 구역에서 청소한 횟수
+    solo_b_cleaning_count = {worker: 0 for worker in workers}  # 혼자 B 구역에서 청소한 횟수
+
+    # B 구역 할당 결과
+    b_allocations = {}
+    b_weight = {}
+
+    # 최종 출력 결과를 저장할 딕셔너리
+    output_schedule = {}
+
+    # 날짜별로 루프 실행
+    for work_date, people in filtered_schedule.items():
+        # A 구역에 배치할 사람 수 결정
+        if len(people) <= 3:
+            b_workers = 1  # A 구역에 1명 배정
+            weight = 1  # 혼자서 B 구역을 맡으면 가중치 1
+        else:
+            b_workers = 2  # A 구역에 2명 배정
+            weight = 0.5  # 둘 이상이 맡으면 가중치 0.5
+
+        b_weight[work_date] = weight  # 가중치를 저장
+
+        # B 구역에 배치할 사람 결정 (가장 적게 청소한 사람 배정)
+        a_workers = len(people) - b_workers
+        b_allocations[work_date] = []
+
+        if b_workers == 1:
+            # 혼자 B 구역에서 일하는 경우, 혼자 일한 횟수와 전체 청소 횟수를 고려
+            least_cleaned = min((solo_b_cleaning_count[p], b_cleaning_count[p], p) for p in people)[2]
+            solo_b_cleaning_count[least_cleaned] += weight  # 혼자 일한 횟수에 가중치 적용
+            b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
+            b_allocations[work_date].append(least_cleaned)
+        else:
+            # 둘 이상이 B 구역에서 일할 경우, 전체 청소 횟수만 고려
+            for _ in range(b_workers):
+                least_cleaned = min((b_cleaning_count[p], p) for p in people)[1]
+                b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
+                b_allocations[work_date].append(least_cleaned)
+
+        # A 구역에 배치할 사람 결정 (B 구역에서 제외한 인원들)
+        a_zone_workers = [worker for worker in people if worker not in b_allocations[work_date]]
+
+        # 결과를 딕셔너리로 저장
+        output_schedule[work_date] = {
+            "workers": ", ".join(people),
+            "zone_A": ", ".join(a_zone_workers),
+            "zone_B": ", ".join(b_allocations[work_date]),
+            "weight_B": b_weight[work_date],
+        }
+
+    # 최종 스케줄 결과 반환
+    return output_schedule

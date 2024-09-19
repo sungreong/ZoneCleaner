@@ -10,7 +10,7 @@ import sqlite3
 from flask import Flask, request, jsonify
 import chardet
 from threading import Thread
-from opt_clean_schedule import solve_cleaning_schedule
+from opt_clean_schedule import solve_cleaning_schedule, solve_cleaning_schedule_logic
 from collections import defaultdict
 from datetime import datetime
 import atexit
@@ -749,7 +749,7 @@ def create_app():
         schedule = generate_schedule(start_date, end_date, workers)
         # 최적화 실행
         try:
-            output_schedule = solve_cleaning_schedule(schedule, workers, vacation_data)
+            output_schedule = solve_cleaning_schedule_logic(schedule, workers, vacation_data)
         except Exception as e:
             st.error(f"스케줄 생성 실패... 휴가일 조정이 필요해보입니다... {e}")
 
