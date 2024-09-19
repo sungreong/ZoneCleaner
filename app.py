@@ -485,26 +485,30 @@ def sidebar():
         remove_all_vacation_data()
         st.rerun()
 
-    if st.sidebar.button("show"):
-        check_vacation_data()
+    # if st.sidebar.button("show"):
+    #     check_vacation_data()
+    with st.sidebar.expander("휴가 데이터 저장"):
+        # 인코딩 방식 선택
+        encoding_option = st.sidebar.selectbox("인코딩 선택(윈도우면 cp949)", ("utf-8", "cp949"))
+        if st.sidebar.button("save vacation data"):
+            data = select_vacation_data()
+            # 데이터를 Pandas DataFrame으로 변환
+            df = pd.DataFrame(data, columns=["Date", "Worker"])
+            # Streamlit에 테이블로 표시
+            # st.write("Vacation Data:", df)
 
-    if st.sidebar.button("save vacation data"):
-        data = select_vacation_data()
-        # 데이터를 Pandas DataFrame으로 변환
-        df = pd.DataFrame(data, columns=["Date", "Worker"])
-
-        # Streamlit에 테이블로 표시
-        # st.write("Vacation Data:", df)
-
-        # CSV로 저장할 수 있도록 Streamlit에서 다운로드 버튼 제공
-        csv = df.to_csv(index=False).encode("utf-8")
-        st.sidebar.download_button(
-            label="Download vacation data as CSV",
-            data=csv,
-            file_name="vacation_data.csv",
-            mime="text/csv",
-            key="download_button",  # 버튼 고유 키 추가
-        )
+            # 선택된 인코딩 방식에 따라 CSV 생성
+            if encoding_option == "utf-8":
+                csv = df.to_csv(index=False).encode("utf-8")
+            elif encoding_option == "cp949":
+                csv = df.to_csv(index=False).encode("cp949")
+            st.sidebar.download_button(
+                label="Download vacation data as CSV",
+                data=csv,
+                file_name="vacation_data.csv",
+                mime="text/csv",
+                key="download_button",  # 버튼 고유 키 추가
+            )
 
 
 def create_app():
