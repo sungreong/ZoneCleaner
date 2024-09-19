@@ -249,11 +249,11 @@ def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
         # 이전 날 B 구역에 배정된 사람 업데이트
         previous_day_b_allocations = b_allocations[work_date]
 
-        # A 구역에 배치할 사람 결정 (A 구역에서도 다양하게 배정하기 위해 가장 적게 배정된 사람 선택)
-        available_for_a_zone = set(people) - set(b_allocations[work_date])  # B 구역에 할당되지 않은 인원들
-        a_zone_workers = sorted(available_for_a_zone, key=lambda x: a_cleaning_count[x])[
-            : len(available_for_a_zone) - b_workers
-        ]
+        # A 구역에 배치할 사람 결정 (B 구역에 배정되지 않은 인원들)
+        available_for_a_zone = set(people) - set(b_allocations[work_date])
+
+        # 남은 인원 모두 A 구역에 배정
+        a_zone_workers = list(available_for_a_zone)
 
         # A 구역 배정 횟수 업데이트
         for worker in a_zone_workers:
