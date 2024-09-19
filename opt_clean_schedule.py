@@ -160,6 +160,9 @@ def solve_cleaning_schedule(schedule, workers, vacation_days):
         return None
 
 
+from datetime import datetime
+
+
 def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
     # 휴가를 고려하여 스케줄 필터링
     filtered_schedule = {}
@@ -181,6 +184,7 @@ def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
     # 청소 횟수 및 혼자 청소한 횟수 추적
     b_cleaning_count = {worker: 0 for worker in workers}  # B 구역에서 청소한 횟수
     solo_b_cleaning_count = {worker: 0 for worker in workers}  # 혼자 B 구역에서 청소한 횟수
+    a_cleaning_count = {worker: 0 for worker in workers}  # A 구역에서 청소한 횟수
 
     # B 구역 할당 결과
     b_allocations = {}
@@ -221,8 +225,13 @@ def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
                 b_allocations[work_date].append(least_cleaned)
                 available_people.remove(least_cleaned)  # 이미 선택된 사람은 제외
 
-        # A 구역에 배치할 사람 결정 (B 구역에서 제외한 인원들)
-        a_zone_workers = [worker for worker in people if worker not in b_allocations[work_date]]
+        # A 구역에 배치할 사람 결정 (A 구역에서도 다양하게 배정하기 위해 가장 적게 배정된 사람 선택)
+        available_for_a_zone = set(people) - set(b_allocations[work_date])  # B 구역에 할당되지 않은 인원들
+        a_zone_workers = sorted(available_for_a_zone, key=lambda x: a_cleaning_count[x])[:a_workers]
+
+        # A 구역 배정 횟수 업데이트
+        for worker in a_zone_workers:
+            a_cleaning_count[worker] += 1
 
         # 결과를 딕셔너리로 저장
         output_schedule[work_date] = {
