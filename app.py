@@ -494,7 +494,7 @@ def sidebar():
         df = pd.DataFrame(data, columns=["Date", "Worker"])
 
         # Streamlit에 테이블로 표시
-        st.write("Vacation Data:", df)
+        # st.write("Vacation Data:", df)
 
         # CSV로 저장할 수 있도록 Streamlit에서 다운로드 버튼 제공
         csv = df.to_csv(index=False).encode("utf-8")
