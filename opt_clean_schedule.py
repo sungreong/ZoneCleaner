@@ -197,7 +197,7 @@ def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
             weight = 1  # 혼자서 B 구역을 맡으면 가중치 1
         else:
             b_workers = 2  # A 구역에 2명 배정
-            weight = 0.5  # 둘 이상이 맡으면 가중치 0.5
+            weight = 1  # 둘 이상이 맡으면 가중치 0.5
 
         b_weight[work_date] = weight  # 가중치를 저장
 
