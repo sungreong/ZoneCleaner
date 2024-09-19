@@ -43,6 +43,16 @@ def generate_schedule(start_date, end_date, workers, use_kr_holiday=True):
     return schedule
 
 
+def get_kr_holidays(start_date, end_date):
+    kr_holidays_list = []
+    temp_current_date = deepcopy(start_date)
+    while temp_current_date <= end_date:
+        if temp_current_date in kr_holidays:
+            kr_holidays_list.append(temp_current_date)
+        temp_current_date += timedelta(days=1)
+    return kr_holidays_list
+
+
 def parse_csv_vacations(csv_contents):
     vacations = {}
     df = pd.read_csv(io.StringIO(csv_contents.decode("utf-8")))
@@ -774,11 +784,11 @@ def create_app():
     use_kr_holiday = st.checkbox(label="일요일을 제외한 휴일 포함할 지 여부", value=False)
 
     # 기간 내 공휴일 필터링
-    st.write(kr_holidays.items())
-    filtered_holidays = {name: date for name, date in kr_holidays.items() if start_date <= date <= end_date}
+
+    used_kr_holidays = get_kr_holidays(start_date, end_date)
 
     # 후보 공휴일 목록에서 사용자가 제외할 공휴일 선택
-    selected_holidays = st.multiselect("Select Holidays to Exclude", list(filtered_holidays.keys()))
+    selected_holidays = st.multiselect("Select Holidays to Exclude", used_kr_holidays)
 
     if st.button("스케줄 최적화"):
         # 스케줄 생성
