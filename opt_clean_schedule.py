@@ -212,11 +212,14 @@ def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
             b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
             b_allocations[work_date].append(least_cleaned)
         else:
-            # 둘 이상이 B 구역에서 일할 경우, 전체 청소 횟수만 고려
+            # 둘 이상이 B 구역에서 일할 경우, 중복되지 않도록 청소 횟수 계산
+            available_people = set(people)  # 할당 가능한 사람들 집합
             for _ in range(b_workers):
-                least_cleaned = min((b_cleaning_count[p], p) for p in people)[1]
+                # 중복되지 않게 최소 청소 횟수인 사람을 선택
+                least_cleaned = min((b_cleaning_count[p], p) for p in available_people)[1]
                 b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
                 b_allocations[work_date].append(least_cleaned)
+                available_people.remove(least_cleaned)  # 이미 선택된 사람은 제외
 
         # A 구역에 배치할 사람 결정 (B 구역에서 제외한 인원들)
         a_zone_workers = [worker for worker in people if worker not in b_allocations[work_date]]
