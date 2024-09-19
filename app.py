@@ -427,7 +427,7 @@ def sidebar():
         if st.session_state.file_processed:
             st.sidebar.info("파일 업로드 및 처리가 완료되었습니다.")
             st.sidebar.button("다시 업로드", on_click=reset_file_upload)
-    height = st.sidebar.number_input("캘린더 높이", min_value=400, max_value=3200, value=400, step=400)
+    height = st.sidebar.number_input("캘린더 높이", min_value=400, max_value=3200, value=400, step=200)
     st.session_state.calendar_height = height
 
     st.sidebar.subheader("현재 휴가 일정")
@@ -884,7 +884,7 @@ def create_app():
                 </script>
                 {calendar_html}
                 """,
-                    height=300,
+                    height=600,
                 )
 
                 current_month += timedelta(days=32)
