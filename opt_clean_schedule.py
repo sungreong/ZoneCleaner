@@ -206,31 +206,45 @@ def solve_cleaning_schedule_logic(schedule, workers, vacation_days):
 
         b_weight[work_date] = weight  # 가중치를 저장
 
-        # B 구역에 배치할 사람 결정 (이전 날 B 구역에 배치되지 않은 사람 우선)
+        # B 구역에 배치할 사람 결정 (이전 날 B 구역에 배정되지 않은 사람을 우선 배정)
         available_people = set(people)  # 현재 날짜의 근무 가능한 인원들
 
         # 이전 날 B 구역에 있던 사람을 배제한 사람들 중 최소 청소 횟수인 사람 선택
         eligible_people = available_people - set(previous_day_b_allocations)
 
-        # 기존 로직으로 돌아가야 하는 경우: eligible_people이 충분하지 않으면 원래 로직 사용
-        if len(eligible_people) < b_workers:
-            eligible_people = available_people
-
-        b_allocations[work_date] = []
-
-        if b_workers == 1:
-            # 혼자 B 구역에서 일하는 경우, 혼자 일한 횟수와 전체 청소 횟수를 고려
-            least_cleaned = min((solo_b_cleaning_count[p], b_cleaning_count[p], p) for p in eligible_people)[2]
-            solo_b_cleaning_count[least_cleaned] += weight  # 혼자 일한 횟수에 가중치 적용
-            b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
-            b_allocations[work_date].append(least_cleaned)
-        else:
-            # 둘 이상이 B 구역에서 일할 경우, 중복되지 않도록 청소 횟수 계산
-            for _ in range(b_workers):
-                least_cleaned = min((b_cleaning_count[p], p) for p in eligible_people)[1]
+        # 체크를 해서 이전 날 배정된 사람을 피하고, 안되면 기존 로직대로 최소 청소 횟수인 사람 배정
+        if len(eligible_people) >= b_workers:
+            # 충분한 인원이 있을 경우
+            b_allocations[work_date] = []
+            if b_workers == 1:
+                # 혼자 B 구역에서 일할 경우, eligible_people에서 선택
+                least_cleaned = min((solo_b_cleaning_count[p], b_cleaning_count[p], p) for p in eligible_people)[2]
+                solo_b_cleaning_count[least_cleaned] += weight  # 혼자 일한 횟수에 가중치 적용
                 b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
                 b_allocations[work_date].append(least_cleaned)
-                eligible_people.remove(least_cleaned)  # 이미 선택된 사람은 제외
+            else:
+                # 둘 이상일 경우, eligible_people에서 선택
+                for _ in range(b_workers):
+                    least_cleaned = min((b_cleaning_count[p], p) for p in eligible_people)[1]
+                    b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
+                    b_allocations[work_date].append(least_cleaned)
+                    eligible_people.remove(least_cleaned)
+        else:
+            # 충분한 인원이 없으면 기존 로직으로 돌아가기
+            b_allocations[work_date] = []
+            if b_workers == 1:
+                # 혼자 B 구역에서 일할 경우
+                least_cleaned = min((solo_b_cleaning_count[p], b_cleaning_count[p], p) for p in available_people)[2]
+                solo_b_cleaning_count[least_cleaned] += weight  # 혼자 일한 횟수에 가중치 적용
+                b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
+                b_allocations[work_date].append(least_cleaned)
+            else:
+                # 둘 이상일 경우
+                for _ in range(b_workers):
+                    least_cleaned = min((b_cleaning_count[p], p) for p in available_people)[1]
+                    b_cleaning_count[least_cleaned] += weight  # 전체 청소 횟수에 가중치 적용
+                    b_allocations[work_date].append(least_cleaned)
+                    available_people.remove(least_cleaned)
 
         # 이전 날 B 구역에 배정된 사람 업데이트
         previous_day_b_allocations = b_allocations[work_date]
