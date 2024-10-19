@@ -14,6 +14,7 @@ from opt_clean_schedule import solve_cleaning_schedule, solve_cleaning_schedule_
 from collections import defaultdict
 from datetime import datetime
 import atexit
+from allocation import main as allocation_main
 
 # Streamlit 페이지 설정을 wide 모드로 변경
 st.set_page_config(layout="wide")
@@ -939,6 +940,16 @@ def create_app():
     check_vacation_data_updates()
 
 
+def main():
+    st.sidebar.title("앱 선택")
+    app_choice = st.sidebar.radio("앱을 선택하세요:", ["청소 스케줄", "환경팀 스케줄"])
+
+    if app_choice == "청소 스케줄":
+        create_app()
+    elif app_choice == "환경팀 스케줄":
+        allocation_main()
+
+
 if __name__ == "__main__":
     # Initialize session state for password check
     if "authenticated" not in st.session_state:
@@ -960,14 +971,14 @@ if __name__ == "__main__":
             st.session_state.authenticated = True  # Set authenticated to True
             st.success("키를 입력하셨습니다.")
             init_db()  # Initialize the database
-            create_app()  # Run the main app
+            main()  # Run the main app
         else:
             if password:  # Only show the error if a password was entered
                 st.error("잘못된 키를 입력하셨습니다.")
     else:
         # If already authenticated, just run the app without showing the password input
         init_db()
-        create_app()
+        main()
 
     # Cleanup function
     def cleanup():
