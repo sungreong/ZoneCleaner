@@ -213,17 +213,16 @@ def calculate_work_stats(start_date, end_date, team_members, vacation_data, sele
     # 날짜 범위 내의 모든 날짜 생성
     date_range = pd.date_range(start_date, end_date)
 
-    # 근무일 계산 (월~토, 공휴일 제외)
+    # 근무일 계산 (월~토, 선택된 휴일만 제외)
     workdays = []
     for date in date_range:
-        # 일요일 아니고, 공휴일이 아닌 날만 포함
-        if date.weekday() < 6 and date not in kr_holidays and date not in selected_holidays:
+        # 일요일이 아니고, 선택된 휴일이 아닌 날만 포함
+        if date.weekday() < 6 and date.date() not in selected_holidays:
             workdays.append(date)
-
+    print(workdays)
     # 각 멤버별 근무 가능일 계산
     work_stats = {}
     for member in team_members:
-        # 휴가를 제외한 실제 근무 가능일 계산
         working_days = []
         for date in workdays:
             date_str = date.strftime("%Y-%m-%d")
@@ -263,13 +262,19 @@ def create_vacation_table(start_date, end_date, vacation_data):
                 if member in vacation_table.index:
                     vacation_table.at[member, date_str] = "●"
 
-    # 일요일과 공휴일 표시
+    # 일요일과 공휴일 표시 (휴가가 없는 경우에만)
     for date in date_strings:
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
         if date_obj.weekday() == 6:  # 일요일
-            vacation_table[date] = "x"
+            # 해당 날짜에 휴가가 없는 셀에만 'x' 표시
+            for member in TEAM_MEMBERS:
+                if vacation_table.at[member, date] != "●":
+                    vacation_table.at[member, date] = "x"
         elif date_obj in kr_holidays:  # 공휴일
-            vacation_table[date] = "⚪"
+            # 해당 날짜에 휴가가 없는 셀에만 '⚪' 표시
+            for member in TEAM_MEMBERS:
+                if vacation_table.at[member, date] != "●":
+                    vacation_table.at[member, date] = "⚪"
 
     # 열 이름을 '일(요일)' 형식으로 변경
     vacation_table.columns = [
@@ -438,7 +443,6 @@ def main():
 
     # 선택된 휴일 날짜 변환
     selected_holidays = [datetime.strptime(h.split(" (")[0], "%Y-%m-%d").date() for h in selected_holiday_strings]
-
     # 휴가 데이터 입력 섹션
     st.subheader("휴가 정보 입력")
 
@@ -513,7 +517,7 @@ def main():
             start_date, end_date, TEAM_MEMBERS, vacation_data, selected_holidays
         )
 
-        # 캘린더 형식으로 결과 표시 (선택��� 휴일 전달)
+        # 캘린더 형식으로 결과 표시 (선택 휴일 전달)
         st.subheader("일일 업무 분배 (캘린더 뷰)")
         calendar_html = create_calendar_html(start_date, end_date, schedule, vacation_data, selected_holidays)
         st.markdown(calendar_html, unsafe_allow_html=True)
