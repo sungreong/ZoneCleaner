@@ -6,7 +6,6 @@ import sqlite3
 import holidays
 import io
 from collections import defaultdict
-import platform
 
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
