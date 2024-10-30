@@ -17,6 +17,10 @@ from datetime import datetime
 import atexit
 from allocation import main as allocation_main
 
+# 팀장 업무 분배 class
+from allocation_job import main as allocation_job_main
+
+
 # Streamlit 페이지 설정을 wide 모드로 변경
 st.set_page_config(layout="wide")
 
@@ -943,12 +947,14 @@ def create_app():
 
 def main():
     st.sidebar.title("앱 선택")
-    app_choice = st.sidebar.radio("앱을 선택하세요:", ["청소 스케줄", "환경팀 스케줄"])
+    app_choice = st.sidebar.radio("앱을 선택하세요:", ["청소 스케줄", "환경팀 스케줄", "업무 배치"])
 
     if app_choice == "청소 스케줄":
         create_app()
     elif app_choice == "환경팀 스케줄":
         allocation_main()
+    elif app_choice == "업무 배치":
+        allocation_job_main()
 
 
 if __name__ == "__main__":
