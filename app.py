@@ -5,7 +5,8 @@ import calendar
 import json
 import streamlit.components.v1 as components
 import holidays, io
-from ortools.sat.python import cp_model
+
+# from ortools.sat.python import cp_model
 import sqlite3
 from flask import Flask, request, jsonify
 import chardet

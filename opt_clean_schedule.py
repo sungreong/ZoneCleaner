@@ -1,4 +1,4 @@
-from ortools.sat.python import cp_model
+# from ortools.sat.python import cp_model
 import math
 
 
@@ -25,6 +25,7 @@ from datetime import datetime
 
 
 def solve_cleaning_schedule(schedule, workers, vacation_days):
+    from ortools.sat.python import cp_model
     # 휴가를 고려하여 스케줄 필터링
     filtered_schedule = {}
 
@@ -43,7 +44,7 @@ def solve_cleaning_schedule(schedule, workers, vacation_days):
             filtered_schedule[day] = available_workers
 
     print("Filtered schedule:", filtered_schedule)
-    model = cp_model.CpModel()
+    model = .CpModel()
     days = sorted(filtered_schedule.keys())
     expected_b_count_min, expected_b_count_max = get_b_zone_min_max(filtered_schedule)
     print("B Range", expected_b_count_min, " ~ ", expected_b_count_max)
