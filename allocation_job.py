@@ -109,7 +109,7 @@ def solve_environment_team_schedule(start_date, end_date, team_members, vacation
         if num_available < 3:
             continue
 
-        rule = ALLOCATION_RULES.get(min(num_available, 5))
+        rule = ALLOCATION_RULES.get(min(num_available, 4))
         daily_assignments = {task: [] for task in TASK_TYPES.values()}
 
         # 업무 타입별 할당 우선순위 계산

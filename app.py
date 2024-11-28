@@ -28,6 +28,8 @@ local_host_ip = "127.0.0.1"
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
 
+TEAM_MEMBERS = ["다솔", "다혜", "민지", "한울"]
+
 
 def is_workday(date, selected_holidays=[]):
     if len(selected_holidays) > 0:
@@ -207,7 +209,9 @@ def load_vacation_data():
     for date, worker in result:
         if date not in vacation_days:
             vacation_days[date] = []
-        vacation_days[date].append(worker)
+        # 팀 멤버만 휴가 일정에 포함
+        if worker in TEAM_MEMBERS:
+            vacation_days[date].append(worker)
 
     return vacation_days
 
