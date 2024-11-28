@@ -585,9 +585,10 @@ def create_app():
     while current_month <= end_month:
         vacation_calendars_html += "<div class='month-row'>"
         for worker in workers:
-            vacation_calendars_html += create_vacation_calendar_html(
-                current_month.year, current_month.month, worker, init_vacation_data_dict
-            )
+            if worker in TEAM_MEMBERS:
+                vacation_calendars_html += create_vacation_calendar_html(
+                    current_month.year, current_month.month, worker, init_vacation_data_dict
+                )
         vacation_calendars_html += "</div>"
         current_month += timedelta(days=32)
         current_month = current_month.replace(day=1)
