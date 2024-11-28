@@ -222,7 +222,11 @@ def select_vacation_data():
     # c.execute(f"SELECT date, worker FROM {TABLE_NAME}")
     start_of_month = st.session_state["start_of_month"]
     end_of_month = st.session_state["end_of_month"]
-    query = f"SELECT date, worker FROM {TABLE_NAME} WHERE date BETWEEN ? AND ?"
+    # add filter for team members
+    query = (
+        f"SELECT date, worker FROM {TABLE_NAME} WHERE date BETWEEN ? AND ? AND worker IN ({', '.join(TEAM_MEMBERS)})"
+    )
+
     print(start_of_month, end_of_month)
     c.execute(query, (start_of_month, end_of_month))
 
