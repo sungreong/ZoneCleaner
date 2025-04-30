@@ -6,11 +6,12 @@ import sqlite3
 import holidays
 import io
 from collections import defaultdict
+import re
 
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
 
-TEAM_MEMBERS = ["다솔", "다혜", "민지", "한울"]
+TEAM_MEMBERS = ["다솔", "다혜", "민지", "한울", "설화"]
 
 DB_FILE = "allocation_data.db"
 TABLE_NAME = "allocation_days"
@@ -97,7 +98,21 @@ ALLOCATION_RULES = {
             {"name": "리뷰", "tasks": ["review"]},
         ]
     },
+    5: {
+        "combined_tasks": [
+            {"name": "리뷰", "tasks": ["review"]},
+            {"name": "마감", "tasks": ["closing"]},
+            {"name": "카톡/어플", "tasks": ["chat", "app"]},
+            {"name": "해피콜1", "tasks": ["happy_call"]},
+            {"name": "해피콜2", "tasks": ["happy_call"]},
+        ]
+    },
 }
+
+
+def remove_trailing_numbers(task_name):
+    """업무 이름 끝에 붙은 숫자를 제거합니다."""
+    return re.sub(r"(\D+)\d+$", r"\1", task_name)
 
 
 def solve_environment_team_schedule(start_date, end_date, team_members, vacation_data, selected_holidays):
@@ -150,17 +165,25 @@ def solve_environment_team_schedule(start_date, end_date, team_members, vacation
             # 각 조합된 업무에 대한 우선순위 계산
             for i, combined_task in enumerate(combined_tasks):
                 combined_name = combined_task["name"]
+                task_types = combined_task["tasks"]
 
-                # 이 조합된 업무를 수행한 횟수 (없으면 0)
-                combined_count = member_combined_task_counts[member].get(combined_name, 0)
+                # 우선순위 계산에 사용할 키 - 업무 타입을 기준으로 함
+                # 해피콜1과 해피콜2는 모두 happy_call이라는 같은 타입
+                priority_key = ",".join(sorted(task_types))
+
+                # 이 업무 타입들을 수행한 횟수 계산
+                type_count = sum(member_task_counts[member][task_type] for task_type in task_types)
 
                 # 전체 업무 할당 비율
                 total_tasks = sum(member_task_counts[member].values())
                 total_ratio = total_tasks / available_days[member] if available_days[member] > 0 else float("inf")
 
                 # 우선순위 점수 계산 (낮을수록 높은 우선순위)
+                # 1. 해당 업무 타입 수행 횟수
+                # 2. 전체 업무 할당 비율
+                # 3. 전체 업무 수행 횟수
                 task_priorities[member][combined_name] = (
-                    combined_count,  # 해당 조합 업무 수행 횟수
+                    type_count,  # 해당 업무 타입 수행 횟수
                     total_ratio,  # 전체 업무 할당 비율
                     total_tasks,  # 전체 업무 수행 횟수
                 )
@@ -175,12 +198,13 @@ def solve_environment_team_schedule(start_date, end_date, team_members, vacation
                 break
 
             combined_name = combined_task["name"]
+            task_types = combined_task["tasks"]
 
             # 현재 조합된 업무에 가장 적합한 멤버 선택
             selected_member = min(
                 remaining_members,
                 key=lambda m: (
-                    task_priorities[m][combined_name][0],  # 해당 조합 업무 수행 횟수
+                    task_priorities[m][combined_name][0],  # 해당 업무 타입 수행 횟수
                     task_priorities[m][combined_name][1],  # 전체 업무 할당 비율
                     task_priorities[m][combined_name][2],  # 전체 업무 수행 횟수
                 ),
@@ -194,7 +218,7 @@ def solve_environment_team_schedule(start_date, end_date, team_members, vacation
             member_combined_task_counts[selected_member][combined_name] += 1
 
             # 개별 업무 카운트 증가 및 할당
-            for task in combined_task["tasks"]:
+            for task in task_types:
                 member_task_counts[selected_member][task] += 1
                 daily_assignments[task].append(selected_member)
 
@@ -834,11 +858,25 @@ def main():
                 "멤버": member,
             }
 
+            # 업무 이름의 끝 숫자를 제거하여 통합하기 위한 딕셔너리
+            consolidated_tasks = {}
+            for task_name, count in combined_task_counts[member].items():
+                # 업무 이름 끝의 숫자 제거
+                base_name = remove_trailing_numbers(task_name)
+                if base_name not in consolidated_tasks:
+                    consolidated_tasks[base_name] = 0
+                consolidated_tasks[base_name] += count
+
+            # 중복 제거된 기본 업무 이름 목록 생성
+            base_task_names = set()
+            for task_name in all_combined_tasks:
+                base_task_names.add(remove_trailing_numbers(task_name))
+
             # 각 조합된 업무별 목표/실제 비교
-            for task_name in sorted(all_combined_tasks):
-                target = work_stats[member]["target_allocations"].get(task_name, 0)
-                actual = combined_task_counts[member].get(task_name, 0)
-                row[f"{task_name} (목표/실제)"] = f"{target}/{actual}"
+            for base_task_name in base_task_names:
+                target = work_stats[member]["target_allocations"].get(base_task_name, 0)
+                actual = consolidated_tasks.get(base_task_name, 0)
+                row[f"{base_task_name} (목표/실제)"] = f"{target}/{actual}"
 
             comparison_data.append(row)
 

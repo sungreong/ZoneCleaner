@@ -28,7 +28,7 @@ local_host_ip = "127.0.0.1"
 # 한국의 공휴일 정보를 가져옵니다.
 kr_holidays = holidays.KR()
 
-TEAM_MEMBERS = ["다솔", "다혜", "민지", "한울"]
+TEAM_MEMBERS = ["다솔", "다혜", "민지", "한울", "설화"]
 
 
 def is_workday(date, selected_holidays=[]):
